@@ -1,70 +1,35 @@
-**Introducción**
+# **Documentación: Quadtree para Gestión Logística**
 
-En este proyecto se aborda el problema de búsqueda eficiente en un conjunto de datos espaciales. Se trabaja con aproximadamente 10.000 puntos de entrega representados como coordenadas (x, y), simulando un sistema de logística en una ciudad. El objetivo es responder consultas espaciales de manera eficiente, como encontrar puntos cercanos a una ubicación o determinar el punto más próximo.
+## **Introducción**
+Este proyecto implementa y optimiza una estructura de datos **Quadtree** desde cero para la gestión eficiente de puntos de entrega en un sistema logístico. Simulamos un entorno con **10.000 a 100.000 puntos** en un plano bidimensional para resolver problemas críticos de distribución, como la identificación de destinos dentro de un radio de entrega y la localización del punto más cercano.
 
-Para resolver este problema, se implementa desde cero un Árbol-KD (KD-Tree) y se compara su rendimiento frente a un enfoque de fuerza bruta.
+## **Descripción de la Estructura**
+El **Quadtree** es una estructura de árbol donde cada nodo interno tiene exactamente cuatro hijos. Se utiliza para particionar un espacio bidimensional dividiendo la región en cuatro cuadrantes (NW, NE, SW, SE).
 
-**Descripción**
+### **Componentes Clave:**
+*   **Punto:** Representa las coordenadas (x, y) de una entrega.
+*   **Rectángulo:** Define los límites geográficos de cada nodo y permite validar intersecciones.
+*   **Capacidad:** En este notebook, hemos configurado una capacidad de **1 punto por nodo** para maximizar la segmentación espacial y observar el comportamiento de la estructura en su estado más granular.
 
-El Árbol-KD es una estructura de datos que organiza puntos en un espacio k-dimensional mediante particiones recursivas. En este caso se utiliza para datos en 2D (coordenadas x, y). El árbol permite reducir significativamente el número de comparaciones necesarias durante las búsquedas, gracias a técnicas de poda basadas en la geometría del espacio.
+## **Funcionalidades Implementadas**
+1.  **Construcción Dinámica:** Inserción de miles de puntos con subdivisión automática de nodos.
+2.  **Búsqueda por Radio (Range Search):** Localización ultra rápida de todos los puntos dentro de una distancia específica.
+3.  **Búsqueda de Vecino Cercano:** Identificación del punto de entrega más próximo a una coordenada objetivo.
+4.  **Visualización Espacial:** Generación de mapas de puntos y validación visual mediante círculos de colisión y zoom.
+5.  **Benchmarking Comparativo:** Pruebas de estrés contra el método de **Fuerza Bruta**.
 
-Por otro lado, el método de fuerza bruta consiste en recorrer todos los puntos en cada consulta, lo cual es simple pero poco eficiente para grandes volúmenes de datos.
+## **Análisis de Rendimiento: Quadtree vs. Fuerza Bruta**
+Tras ejecutar múltiples escenarios, los resultados arrojan conclusiones clave para la toma de decisiones en software logístico:
 
-**Funcionalidades**
+*   **Búsqueda por Radio:** El Quadtree es el ganador indiscutible. Gracias a la poda espacial (descartar regiones enteras que no interesan), es hasta **~34 veces más rápido** que la fuerza bruta en cargas masivas.
+*   **Vecino más Cercano:** En la implementación actual, la fuerza bruta mantiene una ligera ventaja debido al overhead de recursividad y la falta de un algoritmo de poda por distancia mínima en el Quadtree.
+*   **Escalabilidad:** Se identificó que a partir de **10.000 puntos**, la eficiencia del Quadtree crece exponencialmente, siendo la única opción viable para datasets de gran escala (100.000+ puntos).
 
-- Construcción de un Árbol-KD a partir de un conjunto de puntos.
-- Búsqueda de todos los puntos dentro de un radio dado (range search).
-- Búsqueda del punto más cercano a una ubicación (nearest neighbor).
-- Visualización de los puntos en el plano cartesiano.
-- Visualización de los primeros niveles del árbol.
-- Comparación de rendimiento entre KD-Tree y fuerza bruta.
-- Ejecución de pruebas unitarias para validar el funcionamiento.
-
-**Prueba vs Fuerza Bruta**
-
-Se comparan ambos enfoques en distintos escenarios:
-
-- Muchos puntos (10.000)
-- Pocos puntos (10)
-- Radio grande
-- Muchas consultas
-
-El análisis muestra que el KD-Tree es más eficiente en la mayoría de los casos, especialmente con grandes volúmenes de datos y múltiples consultas. Sin embargo, en conjuntos pequeños (por ejemplo, menos de ~16 puntos), la fuerza bruta puede ser más rápida.
-
-Esto se debe a varios factores:
-- El KD-Tree tiene un costo inicial de construcción.
-- La recursión introduce sobrecarga adicional.
-- La localidad de caché favorece a la fuerza bruta en datasets pequeños.
-- El costo constante de recorrer pocos elementos es muy bajo.
-
-**Gráficos**
-
-Se incluyen visualizaciones que permiten:
-- Ver todos los puntos generados.
-- Identificar los puntos dentro de un radio.
-- Mostrar el punto objetivo.
-- Observar el comportamiento del KD-Tree en los primeros niveles.
-- Comparar tiempos de ejecución entre KD-Tree y fuerza bruta (incluyendo escala logarítmica para mejor interpretación).
-
-**Conclusiones**
-
-El Árbol-KD es una solución eficiente para problemas de búsqueda espacial cuando se trabaja con grandes volúmenes de datos o múltiples consultas. Su principal ventaja radica en la poda de regiones irrelevantes, lo que reduce significativamente el número de comparaciones.
-
-Sin embargo, no siempre es la mejor opción. En datasets pequeños o cuando el radio de búsqueda es muy grande, la fuerza bruta puede ser igual o incluso más eficiente debido a su simplicidad y menor sobrecarga.
-
-En este proyecto se observa que el KD-Tree comienza a superar a la fuerza bruta aproximadamente a partir de 16 puntos, lo cual es coherente con el análisis teórico y práctico del comportamiento de ambos enfoques.
-
-**Cómo ejecutar en Google Colab**
-
-1. Abrir Google Colab.
-2. Crear un nuevo notebook.
-3. Copiar y pegar el código completo en una celda.
-4. Ejecutar la celda.
-
-El código generará:
-- Resultados de búsquedas (vecino más cercano y búsqueda por radio).
-- Gráficas de los puntos y consultas.
-- Comparaciones de rendimiento.
-- Visualización del árbol.
-- Resultados de pruebas unitarias.
-
+## **Contenido del Notebook**
+1.  **ESTRUCTURA DEL CUADTREE Y LÓGICA DE BÚSQUEDA**
+2.  **GENERACIÓN DE PUNTOS, CONSULTA ALEATORIA Y CONSTRUCCIÓN DEL QUADTREE**
+3.  **VISUALIZACIÓN DE VECINOS Y MÁS CERCANO**
+4.  **PRUEBAS UNITARIAS**
+5.  **QUAD TREE VS FUERZA BRUTA**
+6.  **GRÁFICOS QUAD TREE VS FUERZA BRUTA**
+7.  **ANÁLISIS ACTUALIZADO**
